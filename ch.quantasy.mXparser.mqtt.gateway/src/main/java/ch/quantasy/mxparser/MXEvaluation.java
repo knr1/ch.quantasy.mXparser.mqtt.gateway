@@ -10,22 +10,22 @@ package ch.quantasy.mxparser;
  * @author reto
  */
 public class MXEvaluation {
-    public final String argumentsID;
-    public final String expressionID;
+    public final String idArguments;
+    public final String idExpression;
     public final double result;
 
     public MXEvaluation(String argumentsID, String expressionID, double result) {
-        this.argumentsID = argumentsID;
-        this.expressionID = expressionID;
+        this.idArguments = argumentsID;
+        this.idExpression = expressionID;
         this.result = result;
     }
 
-    public String getArgumentsID() {
-        return argumentsID;
+    public String getIdArguments() {
+        return idArguments;
     }
 
-    public String getExpressionID() {
-        return expressionID;
+    public String getIdExpression() {
+        return idExpression;
     }
 
     public double getResult() {

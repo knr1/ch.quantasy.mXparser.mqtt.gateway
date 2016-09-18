@@ -67,8 +67,10 @@ public class MXCalculatorService<S extends MXCalculatorServiceContract> extends 
     public MXCalculatorService(URI mqttURI, String instanceName) throws MqttException {
         super(mqttURI, instanceName, new MXCalculatorServiceContract("Calculator", instanceName));
         mxCalculatorMap = new HashMap<>();
-        addDescription(getServiceContract().INTENT_ARGUMENTS, "id: <String> \n map: \n   <variableName>: <variableValue>\n  ...");
-        addDescription(getServiceContract().INTENT_EXPRESSION, "id: <String> \n expression: <mathExpression>");
+        addDescription(getServiceContract().INTENT_ARGUMENTS, "id: <String> \n map: \n   <String>: <String>\n  ...");
+        addDescription(getServiceContract().INTENT_EXPRESSION, "id: <String> \n expression: <String>");
+        addDescription(getServiceContract().EVENT_EVALUATION, "timestamp: [0.." + Long.MAX_VALUE + "]\n idArgument: <String> \n idExpression: <String> \n result: <Double>");
+
 
     }
 
