@@ -75,7 +75,7 @@ public class MXCalculatorService<S extends MXCalculatorServiceContract> extends 
     }
 
     @Override
-    public void messageArrived(String topic, byte[] payload) throws Exception {
+    public void messageReceived(String topic, byte[] payload) throws Exception {
         if (topic.startsWith(getContract().INTENT_EXPRESSION)) {
             MXExpression mxExpression = getMapper().readValue(payload, MXExpression.class);
             String owner = topic.replace(getContract().INTENT_EXPRESSION, "");
