@@ -45,7 +45,7 @@ package ch.quantasy.gateway.service.mxservice;
 import ch.quantasy.mxparser.MXExpression;
 import ch.quantasy.mxparser.MXArgument;
 import ch.quantasy.gateway.service.MXCalculatorServiceContract;
-import ch.quantasy.mqtt.gateway.service.AbstractService;
+import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import ch.quantasy.mxparser.MXEvaluation;
 import ch.quantasy.mxparser.MxCalculator;
 import ch.quantasy.mxparser.MxCalculatorCallback;
@@ -60,25 +60,18 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * @param <G>
  * @param <S>
  */
-public class MXCalculatorService<S extends MXCalculatorServiceContract> extends AbstractService<MXCalculatorServiceContract> implements MxCalculatorCallback {
+public class MXCalculatorService<S extends MXCalculatorServiceContract> implements MxCalculatorCallback {
+
+    private final GatewayClient<S> gatewayClient;
 
     private final HashMap<String, MxCalculator> mxCalculatorMap;
 
     public MXCalculatorService(URI mqttURI, String instanceName) throws MqttException {
-        super(mqttURI, instanceName, new MXCalculatorServiceContract("Calculator", instanceName));
+        gatewayClient = new GatewayClient(mqttURI, instanceName, new MXCalculatorServiceContract("Calculator", instanceName));
         mxCalculatorMap = new HashMap<>();
-        addDescription(getContract().INTENT_ARGUMENTS, "id: <String> \n map: \n   <String>: <String>\n  ...");
-        addDescription(getContract().INTENT_EXPRESSION, "id: <String> \n expression: <String>");
-        addDescription(getContract().EVENT_EVALUATION, "timestamp: [0.." + Long.MAX_VALUE + "]\n idArgument: <String> \n idExpression: <String> \n result: <Double>");
-
-
-    }
-
-    @Override
-    public void messageReceived(String topic, byte[] payload) throws Exception {
-        if (topic.startsWith(getContract().INTENT_EXPRESSION)) {
-            MXExpression mxExpression = getMapper().readValue(payload, MXExpression.class);
-            String owner = topic.replace(getContract().INTENT_EXPRESSION, "");
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT_EXPRESSION + "/#", (topic, payload) -> {
+            MXExpression mxExpression = gatewayClient.getMapper().readValue(payload, MXExpression.class);
+            String owner = topic.replace(gatewayClient.getContract().INTENT_EXPRESSION, "");
             synchronized (mxCalculatorMap) {
                 MxCalculator calculator = mxCalculatorMap.get(owner);
                 if (calculator == null) {
@@ -88,10 +81,10 @@ public class MXCalculatorService<S extends MXCalculatorServiceContract> extends 
                 }
                 calculator.setMxExpression(mxExpression);
             }
-        }
-        if (topic.startsWith(getContract().INTENT_ARGUMENTS)) {
-            MXArgument mxArgument = getMapper().readValue(payload, MXArgument.class);
-            String owner = topic.replace(getContract().INTENT_ARGUMENTS, "");
+        });
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT_ARGUMENTS + "/#", (topic, payload) -> {
+            MXArgument mxArgument = gatewayClient.getMapper().readValue(payload, MXArgument.class);
+            String owner = topic.replace(gatewayClient.getContract().INTENT_ARGUMENTS, "");
             synchronized (mxCalculatorMap) {
                 MxCalculator calculator = mxCalculatorMap.get(owner);
                 if (calculator == null) {
@@ -100,29 +93,35 @@ public class MXCalculatorService<S extends MXCalculatorServiceContract> extends 
                 }
                 calculator.setMxArgument(mxArgument);
             }
-        }
+        });
+        gatewayClient.connect();
+
+        gatewayClient.addDescription(gatewayClient.getContract().INTENT_ARGUMENTS, "id: <String> \n map: \n   <String>: <String>\n  ...");
+        gatewayClient.addDescription(gatewayClient.getContract().INTENT_EXPRESSION, "id: <String> \n expression: <String>");
+        gatewayClient.addDescription(gatewayClient.getContract().EVENT_EVALUATION, "timestamp: [0.." + Long.MAX_VALUE + "]\n idArgument: <String> \n idExpression: <String> \n result: <Double>");
+
     }
 
     @Override
     public void argumentsChanged(String owner, MXArgument argument) {
-        addStatus(getContract().STATUS_ARGUMENTS + owner, argument);
+        gatewayClient.addStatus(gatewayClient.getContract().STATUS_ARGUMENTS + owner, argument);
 
     }
 
     @Override
     public void expressionChanged(String owner, MXExpression expression) {
-        addStatus(getContract().STATUS_EXPRESSION + owner, expression);
+        gatewayClient.addStatus(gatewayClient.getContract().STATUS_EXPRESSION + owner, expression);
     }
 
     @Override
     public void expressionEvaluated(String owner, MXEvaluation evaluation) {
-        addStatus(getContract().STATUS_EVALUATING + owner,null);
-        addEvent(getContract().EVENT_EVALUATION + owner, new EvaluationEvent(evaluation));
+        gatewayClient.addStatus(gatewayClient.getContract().STATUS_EVALUATING + owner, null);
+        gatewayClient.addEvent(gatewayClient.getContract().EVENT_EVALUATION + owner, new EvaluationEvent(evaluation));
     }
 
     @Override
     public void evaluationInProgress(String owner, String mxExpressionID, String mxArgumentID) {
-        addStatus(getContract().STATUS_EVALUATING + owner,true);
+        gatewayClient.addStatus(gatewayClient.getContract().STATUS_EVALUATING + owner, true);
     }
 
     public static class EvaluationEvent {
