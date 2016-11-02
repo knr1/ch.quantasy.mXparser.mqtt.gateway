@@ -62,7 +62,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  */
 public class MXCalculatorService extends GatewayClient<MXCalculatorServiceContract> implements MxCalculatorCallback {
 
-
     private final HashMap<String, MxCalculator> mxCalculatorMap;
 
     public MXCalculatorService(URI mqttURI, String instanceName) throws MqttException {
@@ -115,36 +114,11 @@ public class MXCalculatorService extends GatewayClient<MXCalculatorServiceContra
     @Override
     public void expressionEvaluated(String owner, MXEvaluation evaluation) {
         addStatus(getContract().STATUS_EVALUATING + owner, null);
-        addEvent(getContract().EVENT_EVALUATION + owner, new EvaluationEvent(evaluation));
+        addEvent(getContract().EVENT_EVALUATION + owner, evaluation);
     }
 
     @Override
     public void evaluationInProgress(String owner, String mxExpressionID, String mxArgumentID) {
         addStatus(getContract().STATUS_EVALUATING + owner, true);
     }
-
-    public static class EvaluationEvent {
-
-        protected long timestamp;
-        protected MXEvaluation evaluation;
-
-        public EvaluationEvent(MXEvaluation evaluation) {
-            this(evaluation, System.currentTimeMillis());
-        }
-
-        public EvaluationEvent(MXEvaluation evaluation, long timeStamp) {
-            this.evaluation = evaluation;
-            this.timestamp = timeStamp;
-        }
-
-        public long getTimestamp() {
-            return timestamp;
-        }
-
-        public MXEvaluation getEvaluation() {
-            return evaluation;
-        }
-
-    }
-
 }
