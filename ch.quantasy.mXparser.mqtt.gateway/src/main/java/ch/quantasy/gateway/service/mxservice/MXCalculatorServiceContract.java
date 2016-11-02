@@ -40,34 +40,40 @@
  *
  *
  */
-package ch.quantasy.mxparser;
+package ch.quantasy.gateway.service.mxservice;
+
+import ch.quantasy.mqtt.gateway.client.ClientContract;
 
 /**
  *
  * @author reto
  */
-public class MXEvaluation {
-    public final String idArguments;
-    public final String idExpression;
-    public final double result;
-
-    public MXEvaluation(String argumentsID, String expressionID, double result) {
-        this.idArguments = argumentsID;
-        this.idExpression = expressionID;
-        this.result = result;
-    }
-
-    public String getIdArguments() {
-        return idArguments;
-    }
-
-    public String getIdExpression() {
-        return idExpression;
-    }
-
-    public double getResult() {
-        return result;
-    }
+public class MXCalculatorServiceContract extends ClientContract{
+    public final String INTENT_EXPRESSION;
+    public final String STATUS_EXPRESSION;
+    public final String EVENT_EVALUATION;
+    public final String EVALUATION;
+    public final String EXPRESSION;
+    public final String INTENT_ARGUMENTS;
+    public final String ARGUMENTS;
+    public final String STATUS_ARGUMENTS;
+    public final String STATUS_EVALUATING;
+    public final String EVALUATING;
     
+    
+    public MXCalculatorServiceContract(String baseClass,String instance){
+        super("MX",baseClass,instance);
+        EXPRESSION="expression";
+        INTENT_EXPRESSION=INTENT+"/"+EXPRESSION;
+        STATUS_EXPRESSION=STATUS+"/"+EXPRESSION;
+        EVALUATION="evaluation";
+        EVENT_EVALUATION=EVENT+"/"+EVALUATION;
+        ARGUMENTS="arguments";
+        INTENT_ARGUMENTS=INTENT+"/"+ARGUMENTS;
+        STATUS_ARGUMENTS=STATUS+"/"+ARGUMENTS;
+        EVALUATING="evaluating";
+        STATUS_EVALUATING=STATUS+"/"+EVALUATING;
+        
+    }        
     
 }
