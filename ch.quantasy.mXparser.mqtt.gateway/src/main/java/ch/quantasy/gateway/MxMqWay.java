@@ -46,6 +46,9 @@ import ch.quantasy.gateway.service.mxservice.MXCalculatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
@@ -53,6 +56,17 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * @author reto
  */
 public class MxMqWay {
+    
+    public static String computerName;
+
+    static {
+        try {
+            computerName = java.net.InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(MxMqWay.class.getName()).log(Level.SEVERE, null, ex);
+            computerName = "undefined";
+        }
+    }
 
        public static void main(String[] args) throws MqttException, InterruptedException, JsonProcessingException, IOException {
            URI mqttURI = URI.create("tcp://127.0.0.1:1883");
@@ -64,7 +78,7 @@ public class MxMqWay {
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
         
 
-           MXCalculatorService s= new MXCalculatorService(mqttURI, "prisma");
+           MXCalculatorService s= new MXCalculatorService(mqttURI, computerName);
         System.in.read();
     
     }
