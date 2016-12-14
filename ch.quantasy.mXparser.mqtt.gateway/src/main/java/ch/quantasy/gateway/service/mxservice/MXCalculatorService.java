@@ -93,31 +93,31 @@ public class MXCalculatorService extends GatewayClient<MXCalculatorServiceContra
         });
         connect();
 
-        addDescription(getContract().INTENT_ARGUMENTS, "id: <String> \n map: \n   <String>: <String>\n  ...");
-        addDescription(getContract().INTENT_EXPRESSION, "id: <String> \n expression: <String>");
-        addDescription(getContract().EVENT_EVALUATION, "timestamp: [0.." + Long.MAX_VALUE + "]\n idArgument: <String> \n idExpression: <String> \n result: <Double>");
+        publishDescription(getContract().INTENT_ARGUMENTS, "id: <String> \n map: \n   <String>: <String>\n  ...");
+        publishDescription(getContract().INTENT_EXPRESSION, "id: <String> \n expression: <String>");
+        publishDescription(getContract().EVENT_EVALUATION, "timestamp: [0.." + Long.MAX_VALUE + "]\n idArgument: <String> \n idExpression: <String> \n result: <Double>");
 
     }
 
     @Override
     public void argumentsChanged(String owner, MXArgument argument) {
-        addStatus(getContract().STATUS_ARGUMENTS + owner, argument);
+        publishStatus(getContract().STATUS_ARGUMENTS + owner, argument);
 
     }
 
     @Override
     public void expressionChanged(String owner, MXExpression expression) {
-        addStatus(getContract().STATUS_EXPRESSION + owner, expression);
+        publishStatus(getContract().STATUS_EXPRESSION + owner, expression);
     }
 
     @Override
     public void expressionEvaluated(String owner, MXEvaluation evaluation) {
-        addStatus(getContract().STATUS_EVALUATING + owner, null);
-        addEvent(getContract().EVENT_EVALUATION + owner, evaluation);
+        publishStatus(getContract().STATUS_EVALUATING + owner, null);
+        publishEvent(getContract().EVENT_EVALUATION + owner, evaluation);
     }
 
     @Override
     public void evaluationInProgress(String owner, String mxExpressionID, String mxArgumentID) {
-        addStatus(getContract().STATUS_EVALUATING + owner, true);
+        publishStatus(getContract().STATUS_EVALUATING + owner, true);
     }
 }
