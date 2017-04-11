@@ -43,12 +43,14 @@
 package ch.quantasy.gateway.service.mxservice;
 
 import ch.quantasy.mqtt.gateway.client.ClientContract;
+import java.util.Map;
 
 /**
  *
  * @author reto
  */
-public class MXCalculatorServiceContract extends ClientContract{
+public class MXCalculatorServiceContract extends ClientContract {
+
     public final String INTENT_EXPRESSION;
     public final String STATUS_EXPRESSION;
     public final String EVENT_EVALUATION;
@@ -59,21 +61,27 @@ public class MXCalculatorServiceContract extends ClientContract{
     public final String STATUS_ARGUMENTS;
     public final String STATUS_EVALUATING;
     public final String EVALUATING;
-    
-    
-    public MXCalculatorServiceContract(String baseClass,String instance){
-        super("MX",baseClass,instance);
-        EXPRESSION="expression";
-        INTENT_EXPRESSION=INTENT+"/"+EXPRESSION;
-        STATUS_EXPRESSION=STATUS+"/"+EXPRESSION;
-        EVALUATION="evaluation";
-        EVENT_EVALUATION=EVENT+"/"+EVALUATION;
-        ARGUMENTS="arguments";
-        INTENT_ARGUMENTS=INTENT+"/"+ARGUMENTS;
-        STATUS_ARGUMENTS=STATUS+"/"+ARGUMENTS;
-        EVALUATING="evaluating";
-        STATUS_EVALUATING=STATUS+"/"+EVALUATING;
-        
-    }        
-    
+
+    public MXCalculatorServiceContract(String baseClass, String instance) {
+        super("MX", baseClass, instance);
+        EXPRESSION = "expression";
+        INTENT_EXPRESSION = INTENT + "/" + EXPRESSION;
+        STATUS_EXPRESSION = STATUS + "/" + EXPRESSION;
+        EVALUATION = "evaluation";
+        EVENT_EVALUATION = EVENT + "/" + EVALUATION;
+        ARGUMENTS = "arguments";
+        INTENT_ARGUMENTS = INTENT + "/" + ARGUMENTS;
+        STATUS_ARGUMENTS = STATUS + "/" + ARGUMENTS;
+        EVALUATING = "evaluating";
+        STATUS_EVALUATING = STATUS + "/" + EVALUATING;
+
+    }
+
+    @Override
+    protected void describe(Map<String, String> descriptions) {
+        descriptions.put(INTENT_ARGUMENTS, "id: <String> \n map: \n   <String>: <String>\n  ...");
+        descriptions.put(INTENT_EXPRESSION, "id: <String> \n expression: <String>");
+        descriptions.put(EVENT_EVALUATION, "timestamp: [0.." + Long.MAX_VALUE + "]\n idArgument: <String> \n idExpression: <String> \n result: <Double>");
+    }
+
 }

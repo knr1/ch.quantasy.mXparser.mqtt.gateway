@@ -92,11 +92,6 @@ public class MXCalculatorService extends GatewayClient<MXCalculatorServiceContra
             }
         });
         connect();
-
-        publishDescription(getContract().INTENT_ARGUMENTS, "id: <String> \n map: \n   <String>: <String>\n  ...");
-        publishDescription(getContract().INTENT_EXPRESSION, "id: <String> \n expression: <String>");
-        publishDescription(getContract().EVENT_EVALUATION, "timestamp: [0.." + Long.MAX_VALUE + "]\n idArgument: <String> \n idExpression: <String> \n result: <Double>");
-
     }
 
     @Override
