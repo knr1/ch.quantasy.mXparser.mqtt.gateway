@@ -42,14 +42,14 @@
  */
 package ch.quantasy.gateway.service.mxservice;
 
-import ch.quantasy.mqtt.gateway.client.ClientContract;
+import ch.quantasy.mqtt.gateway.client.AyamlClientContract;
 import java.util.Map;
 
 /**
  *
  * @author reto
  */
-public class MXCalculatorServiceContract extends ClientContract {
+public class MXCalculatorServiceContract extends AyamlClientContract {
 
     public final String INTENT_EXPRESSION;
     public final String STATUS_EXPRESSION;
