@@ -42,14 +42,18 @@
  */
 package ch.quantasy.gateway.service.mxservice;
 
+import ch.quantasy.gateway.message.MxIntent;
 import ch.quantasy.mxparser.MXExpression;
 import ch.quantasy.mxparser.MXArgument;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
-import ch.quantasy.mxparser.MXEvaluation;
+import ch.quantasy.mqtt.gateway.client.message.MessageCollector;
+import ch.quantasy.mqtt.gateway.client.message.PublishingMessageCollector;
+import ch.quantasy.mxparser.MXEvaluationEvent;
 import ch.quantasy.mxparser.MxCalculator;
 import ch.quantasy.mxparser.MxCalculatorCallback;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -62,13 +66,19 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 public class MXCalculatorService extends GatewayClient<MXCalculatorServiceContract> implements MxCalculatorCallback {
 
     private final HashMap<String, MxCalculator> mxCalculatorMap;
+    
+      private final MessageCollector collector;
+    private PublishingMessageCollector<MXCalculatorServiceContract> eventCollector;
+
 
     public MXCalculatorService(URI mqttURI, String instanceName) throws MqttException {
-        super(mqttURI, instanceName, new MXCalculatorServiceContract("Calculator", instanceName));
+        super(mqttURI, instanceName, new MXCalculatorServiceContract(instanceName));
+         collector = new MessageCollector();
         mxCalculatorMap = new HashMap<>();
-        subscribe(getContract().INTENT_EXPRESSION + "/#", (topic, payload) -> {
-            MXExpression mxExpression = getMapper().readValue(payload, MXExpression.class);
-            String owner = topic.replace(getContract().INTENT_EXPRESSION, "");
+        subscribe(getContract().INTENT + "/#", (topic, payload) -> {
+            
+            Set<MxIntent> mxIntents = super.toMessageSet(payload, MxIntent.class);
+            String owner = topic.replace(getContract().INTENT, "");
             synchronized (mxCalculatorMap) {
                 MxCalculator calculator = mxCalculatorMap.get(owner);
                 if (calculator == null) {
@@ -76,22 +86,20 @@ public class MXCalculatorService extends GatewayClient<MXCalculatorServiceContra
                     mxCalculatorMap.put(owner, calculator);
 
                 }
-                calculator.setMxExpression(mxExpression);
-            }
-        });
-        subscribe(getContract().INTENT_ARGUMENTS + "/#", (topic, payload) -> {
-            MXArgument mxArgument = getMapper().readValue(payload, MXArgument.class);
-            String owner = topic.replace(getContract().INTENT_ARGUMENTS, "");
-            synchronized (mxCalculatorMap) {
-                MxCalculator calculator = mxCalculatorMap.get(owner);
-                if (calculator == null) {
-                    calculator = new MxCalculator(this, owner);
-                    mxCalculatorMap.put(owner, calculator);
+                for(MxIntent mxIntent:mxIntents){
+                    if(mxIntent.expression!=null){
+                        MXExpression expression=new MXExpression(mxIntent.expression.getId(),mxIntent.expression.getValue());
+                        calculator.setMxExpression(expression);
+                    }
+                    if(mxIntent.argument!=null){
+                        MXArgument argument=new MXArgument(mxIntent.argument.getId(),mxIntent.argument.getMap());
+                        calculator.setMxArgument(argument);
+                    }
                 }
-                calculator.setMxArgument(mxArgument);
             }
         });
         connect();
+         eventCollector = new PublishingMessageCollector<MXCalculatorServiceContract>(collector, this);
     }
 
     @Override
@@ -106,13 +114,13 @@ public class MXCalculatorService extends GatewayClient<MXCalculatorServiceContra
     }
 
     @Override
-    public void expressionEvaluated(String owner, MXEvaluation evaluation) {
+    public void expressionEvaluated(String owner, MXEvaluationEvent evaluation) {
         publishStatus(getContract().STATUS_EVALUATING + owner, null);
-        publishEvent(getContract().EVENT_EVALUATION + owner, evaluation);
+        eventCollector.readyToPublish(getContract().EVENT_EVALUATION + owner, evaluation);
     }
 
     @Override
-    public void evaluationInProgress(String owner, String mxExpressionID, String mxArgumentID) {
+    public void evaluationInProgress(String owner, String id) {
         publishStatus(getContract().STATUS_EVALUATING + owner, true);
     }
 }

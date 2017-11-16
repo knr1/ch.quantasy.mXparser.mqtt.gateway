@@ -40,33 +40,46 @@
  *
  *
  */
-package ch.quantasy.mxparser;
+package ch.quantasy.gateway.message;
+
+import ch.quantasy.mqtt.gateway.client.message.annotations.AValidator;
+import ch.quantasy.mqtt.gateway.client.message.annotations.NonNull;
+import ch.quantasy.mqtt.gateway.client.message.annotations.StringForm;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author reto
  */
-public class MXEvaluation {
-    public final String idArguments;
-    public final String idExpression;
-    public final double result;
+public class Argument extends AValidator{
 
-    public MXEvaluation(String argumentsID, String expressionID, double result) {
-        this.idArguments = argumentsID;
-        this.idExpression = expressionID;
-        this.result = result;
+    @NonNull
+    @StringForm()
+    private String id;
+    @NonNull
+    @StringForm()
+    private Map<String,String> map;
+
+    public Argument() {
+
     }
 
-    public String getIdArguments() {
-        return idArguments;
+    public Argument(String id, Map<String,String> arguments) {
+        if (arguments == null) {
+            throw new IllegalArgumentException();
+        }
+        this.map = new HashMap<>(arguments);
+        this.id=id;
     }
 
-    public String getIdExpression() {
-        return idExpression;
+    public Map<String,String> getMap() {
+        return map;
     }
+    
 
-    public double getResult() {
-        return result;
+    public String getId() {
+        return id;
     }
     
     

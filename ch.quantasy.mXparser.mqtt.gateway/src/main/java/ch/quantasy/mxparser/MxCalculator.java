@@ -99,9 +99,9 @@ public class MxCalculator {
                 mxArgumentID = mxArgument.getId();
             }
             if (expression.checkSyntax()) {
-                callback.evaluationInProgress(owner,mxExpression.getId(),mxArgument.getId());
+                callback.evaluationInProgress(owner,mxExpression.getId());
                 double result = expression.calculate();
-                callback.expressionEvaluated(owner,new MXEvaluation(mxArgumentID, mxExpression.getId(), result));
+                callback.expressionEvaluated(owner,new MXEvaluationEvent(mxExpression.getId(), result));
             }else{
                 System.out.println(expression.getErrorMessage());
             }

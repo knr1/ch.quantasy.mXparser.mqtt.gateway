@@ -1,5 +1,4 @@
 /*
- * 
  *   "MxMqWay"
  *
  *    MxMqWay(tm): A gateway to provide an MQTT-View for the mXparser built by MARIUSZ GROMADA (mXparser-MQTT-Gateway).
@@ -40,52 +39,19 @@
  *
  *
  */
-package ch.quantasy.gateway.service.mxservice;
+package ch.quantasy.gateway.message;
 
-import ch.quantasy.gateway.message.MxIntent;
-import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
-import ch.quantasy.mqtt.gateway.client.message.Message;
-import ch.quantasy.mxparser.MXEvaluationEvent;
-import java.util.Map;
+import ch.quantasy.mqtt.gateway.client.message.AnIntent;
+import ch.quantasy.mqtt.gateway.client.message.annotations.Nullable;
 
 /**
  *
  * @author reto
  */
-public class MXCalculatorServiceContract extends AyamlServiceContract {
-
-    public final String STATUS_EXPRESSION;
-    public final String EVENT_EVALUATION;
-    public final String EVALUATION;
-    public final String EXPRESSION;
-    public final String ARGUMENTS;
-    public final String STATUS_ARGUMENTS;
-    public final String STATUS_EVALUATING;
-    public final String EVALUATING;
-
-    public MXCalculatorServiceContract(String instance) {
-        super("MX", "Calculator", instance);
-        EXPRESSION = "expression";
-        STATUS_EXPRESSION = STATUS + "/" + EXPRESSION;
-        EVALUATION = "evaluation";
-        EVENT_EVALUATION = EVENT + "/" + EVALUATION;
-        ARGUMENTS = "arguments";
-        STATUS_ARGUMENTS = STATUS + "/" + ARGUMENTS;
-        EVALUATING = "evaluating";
-        STATUS_EVALUATING = STATUS + "/" + EVALUATING;
-        addMessageTopic(INTENT, MxIntent.class);
-        addMessageTopic(EVENT_EVALUATION, MXEvaluationEvent.class);
-
-    }
-    public static String getDataFormatDescription(Class o) {
-        return getDataFormatDescription(o, "");
-    }
-
-    @Override
-    protected void describe(Map<String, String> descriptions) {
-     for(Map.Entry<String,Class<? extends Message>> entry:getMessageTopicMap().entrySet()){
-            descriptions.put(entry.getKey(), getDataFormatDescription(entry.getValue()));
-        }
-    }
-
+public class MxIntent extends AnIntent{
+    @Nullable
+    public Argument argument;
+    @Nullable
+    public Expression expression;
+      
 }

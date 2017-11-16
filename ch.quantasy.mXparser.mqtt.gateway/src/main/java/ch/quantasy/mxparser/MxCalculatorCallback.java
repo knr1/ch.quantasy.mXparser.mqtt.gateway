@@ -49,6 +49,6 @@ package ch.quantasy.mxparser;
 public interface MxCalculatorCallback {
     public void argumentsChanged(String owner, MXArgument argument);
     public void expressionChanged(String owner,MXExpression expression);
-    public void expressionEvaluated(String owner, MXEvaluation evaluation);
-    public void evaluationInProgress(String owner, String mxExpressionID,String mxArgumentID);
+    public void expressionEvaluated(String owner, MXEvaluationEvent evaluation);
+    public void evaluationInProgress(String owner, String id);
 }

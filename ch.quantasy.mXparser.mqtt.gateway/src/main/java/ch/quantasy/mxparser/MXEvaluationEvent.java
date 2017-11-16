@@ -40,52 +40,37 @@
  *
  *
  */
-package ch.quantasy.gateway.service.mxservice;
+package ch.quantasy.mxparser;
 
-import ch.quantasy.gateway.message.MxIntent;
-import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
-import ch.quantasy.mqtt.gateway.client.message.Message;
-import ch.quantasy.mxparser.MXEvaluationEvent;
-import java.util.Map;
+import ch.quantasy.mqtt.gateway.client.message.AnEvent;
+import ch.quantasy.mqtt.gateway.client.message.annotations.Fraction;
+import ch.quantasy.mqtt.gateway.client.message.annotations.NonNull;
+import ch.quantasy.mqtt.gateway.client.message.annotations.StringForm;
 
 /**
  *
  * @author reto
  */
-public class MXCalculatorServiceContract extends AyamlServiceContract {
+public class MXEvaluationEvent extends AnEvent{
+    @NonNull
+    @StringForm
+    public final String id;
+    @NonNull
+    @Fraction(from=Double.MIN_VALUE,to=Double.MAX_VALUE)
+    public final double result;
 
-    public final String STATUS_EXPRESSION;
-    public final String EVENT_EVALUATION;
-    public final String EVALUATION;
-    public final String EXPRESSION;
-    public final String ARGUMENTS;
-    public final String STATUS_ARGUMENTS;
-    public final String STATUS_EVALUATING;
-    public final String EVALUATING;
-
-    public MXCalculatorServiceContract(String instance) {
-        super("MX", "Calculator", instance);
-        EXPRESSION = "expression";
-        STATUS_EXPRESSION = STATUS + "/" + EXPRESSION;
-        EVALUATION = "evaluation";
-        EVENT_EVALUATION = EVENT + "/" + EVALUATION;
-        ARGUMENTS = "arguments";
-        STATUS_ARGUMENTS = STATUS + "/" + ARGUMENTS;
-        EVALUATING = "evaluating";
-        STATUS_EVALUATING = STATUS + "/" + EVALUATING;
-        addMessageTopic(INTENT, MxIntent.class);
-        addMessageTopic(EVENT_EVALUATION, MXEvaluationEvent.class);
-
-    }
-    public static String getDataFormatDescription(Class o) {
-        return getDataFormatDescription(o, "");
+    public MXEvaluationEvent(String id, double result) {
+        this.id = id;
+        this.result = result;
     }
 
-    @Override
-    protected void describe(Map<String, String> descriptions) {
-     for(Map.Entry<String,Class<? extends Message>> entry:getMessageTopicMap().entrySet()){
-            descriptions.put(entry.getKey(), getDataFormatDescription(entry.getValue()));
-        }
+    public String getId() {
+        return id;
     }
 
+    public double getResult() {
+        return result;
+    }
+    
+    
 }
