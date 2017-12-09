@@ -1,5 +1,4 @@
 /*
- * 
  *   "MxMqWay"
  *
  *    MxMqWay(tm): A gateway to provide an MQTT-View for the mXparser built by MARIUSZ GROMADA (mXparser-MQTT-Gateway).
@@ -40,15 +39,23 @@
  *
  *
  */
-package ch.quantasy.mxparser;
+package ch.quantasy.gateway.message;
+
+import ch.quantasy.mqtt.gateway.client.message.AStatus;
 
 /**
  *
  * @author reto
  */
-public interface MxCalculatorCallback {
-    public void argumentsChanged(String owner, MXArgument argument);
-    public void expressionChanged(String owner,MXExpression expression);
-    public void expressionEvaluated(String owner, MXEvaluationEvent evaluation);
-    public void evaluationInProgress(String owner, MXEvaluationStatus status);
+public class ArgumentStatus extends AStatus {
+    public Argument argument;
+
+    private ArgumentStatus() {
+    }
+
+    
+    public ArgumentStatus(Argument argument) {
+        this.argument = argument;
+    }
+    
 }

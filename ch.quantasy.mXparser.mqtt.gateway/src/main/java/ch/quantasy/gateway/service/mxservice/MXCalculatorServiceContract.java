@@ -42,10 +42,13 @@
  */
 package ch.quantasy.gateway.service.mxservice;
 
+import ch.quantasy.gateway.message.ArgumentStatus;
+import ch.quantasy.gateway.message.ExpressionStatus;
 import ch.quantasy.gateway.message.MxIntent;
 import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
 import ch.quantasy.mqtt.gateway.client.message.Message;
 import ch.quantasy.mxparser.MXEvaluationEvent;
+import ch.quantasy.mxparser.MXEvaluationStatus;
 import java.util.Map;
 
 /**
@@ -73,17 +76,21 @@ public class MXCalculatorServiceContract extends AyamlServiceContract {
         STATUS_ARGUMENTS = STATUS + "/" + ARGUMENTS;
         EVALUATING = "evaluating";
         STATUS_EVALUATING = STATUS + "/" + EVALUATING;
+        addMessageTopic(STATUS_ARGUMENTS+"/<id>", ArgumentStatus.class);
+        addMessageTopic(STATUS_EVALUATING+"/<id>", MXEvaluationStatus.class);
+        addMessageTopic(STATUS_EXPRESSION+"/<id>", ExpressionStatus.class);
         addMessageTopic(INTENT, MxIntent.class);
-        addMessageTopic(EVENT_EVALUATION, MXEvaluationEvent.class);
+        addMessageTopic(EVENT_EVALUATION+"/<id>", MXEvaluationEvent.class);
 
     }
+
     public static String getDataFormatDescription(Class o) {
         return getDataFormatDescription(o, "");
     }
 
     @Override
     protected void describe(Map<String, String> descriptions) {
-     for(Map.Entry<String,Class<? extends Message>> entry:getMessageTopicMap().entrySet()){
+        for (Map.Entry<String, Class<? extends Message>> entry : getMessageTopicMap().entrySet()) {
             descriptions.put(entry.getKey(), getDataFormatDescription(entry.getValue()));
         }
     }

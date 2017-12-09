@@ -48,6 +48,7 @@ import ch.quantasy.gateway.service.mxservice.MXCalculatorServiceContract;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import ch.quantasy.mqtt.gateway.client.message.MessageCollector;
 import ch.quantasy.mqtt.gateway.client.message.PublishingMessageCollector;
+import ch.quantasy.mxparser.MXArgument;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
@@ -75,9 +76,35 @@ public class MXCalculatorAgent {
         arguments.put("x", "1");
         arguments.put("y", "2");
         arguments.put("z", "3");
-        intent.argument = new Argument("prismaAgent", arguments);
-        intent.expression = new Expression("prismaAgent", "sin(x+y)+cos(z)");
-        intentCollector.readyToPublish(gwc.getContract().INTENT, intent);
+        intent.argument = new Argument("question1", arguments);
+        intent.expression = new Expression("question1", "sin(x+y)+cos(z)");
+        intentCollector.readyToPublish(gwc.getContract().INTENT + "/IamPrisma", intent);
+        
+        intent = new MxIntent();
+        arguments = new HashMap<>();
+        arguments.put("x", "3");
+        arguments.put("y", "4");
+        intent.argument = new Argument("question2", arguments);
+        intent.expression = new Expression("question2", "sqrt(x^2+y^2)");
+        intentCollector.readyToPublish(gwc.getContract().INTENT + "/IamPrisma", intent);
+        
+        intent = new MxIntent();
+        arguments = new HashMap<>();
+        arguments.put("x", "7");
+        arguments.put("y", "7");
+        arguments.put("z", "7");
+        intent.argument = new Argument("question1", arguments);
+        intent.expression = new Expression("question1", "x+y+z");
+        intentCollector.readyToPublish(gwc.getContract().INTENT + "/IamBorg", intent);
+        
+        intent = new MxIntent();
+        arguments = new HashMap<>();
+        arguments.put("x", "5");
+        arguments.put("y", "12");
+        intent.argument = new Argument("question2", arguments);
+        intent.expression = new Expression("question2", "sqrt(x^2+y^2)");
+        intentCollector.readyToPublish(gwc.getContract().INTENT + "/IamBorg", intent);
+
     }
 
     public static void main(String[] args) throws MqttException, IOException {

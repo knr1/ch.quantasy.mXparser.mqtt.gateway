@@ -99,7 +99,7 @@ public class MxCalculator {
                 mxArgumentID = mxArgument.getId();
             }
             if (expression.checkSyntax()) {
-                callback.evaluationInProgress(owner,mxExpression.getId());
+                callback.evaluationInProgress(owner,new MXEvaluationStatus(mxExpression.getId()));
                 double result = expression.calculate();
                 callback.expressionEvaluated(owner,new MXEvaluationEvent(mxExpression.getId(), result));
             }else{
