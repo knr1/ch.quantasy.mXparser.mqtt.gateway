@@ -88,11 +88,4 @@ public class MXCalculatorServiceContract extends AyamlServiceContract {
         return getDataFormatDescription(o, "");
     }
 
-    @Override
-    protected void describe(Map<String, String> descriptions) {
-        for (Map.Entry<String, Class<? extends Message>> entry : getMessageTopicMap().entrySet()) {
-            descriptions.put(entry.getKey(), getDataFormatDescription(entry.getValue()));
-        }
-    }
-
 }
