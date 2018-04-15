@@ -76,11 +76,15 @@ public class MXCalculatorServiceContract extends AyamlServiceContract {
         STATUS_ARGUMENTS = STATUS + "/" + ARGUMENTS;
         EVALUATING = "evaluating";
         STATUS_EVALUATING = STATUS + "/" + EVALUATING;
-        addMessageTopic(STATUS_ARGUMENTS+"/<id>", ArgumentStatus.class);
-        addMessageTopic(STATUS_EVALUATING+"/<id>", MXEvaluationStatus.class);
-        addMessageTopic(STATUS_EXPRESSION+"/<id>", ExpressionStatus.class);
-        addMessageTopic(INTENT, MxIntent.class);
-        addMessageTopic(EVENT_EVALUATION+"/<id>", MXEvaluationEvent.class);
+    }
+
+    @Override
+    public void setMessageTopics(Map<String, Class<? extends Message>> messageTopicMap) {
+        messageTopicMap.put(STATUS_ARGUMENTS + "/<id>", ArgumentStatus.class);
+        messageTopicMap.put(STATUS_EVALUATING + "/<id>", MXEvaluationStatus.class);
+        messageTopicMap.put(STATUS_EXPRESSION + "/<id>", ExpressionStatus.class);
+        messageTopicMap.put(INTENT, MxIntent.class);
+        messageTopicMap.put(EVENT_EVALUATION + "/<id>", MXEvaluationEvent.class);
 
     }
 
